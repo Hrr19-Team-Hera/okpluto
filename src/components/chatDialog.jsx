@@ -29,8 +29,7 @@ class ChatDialog extends React.Component {
       attendees: [this.props.userInfo._id, this.props.userId],
       category: 'Dog Park',
       snackbar: false,
-      messages: ['a','b'],
-      testmessages: ['b','c'],
+      messages: [{text: 'a'}],
       inputMessage: ""
     };
     this.handleChange = this.handleChange.bind(this);
@@ -47,7 +46,7 @@ class ChatDialog extends React.Component {
     var self = this;
     chatServices.listenForMessage(function(data){
       console.log('message pushed to state',data);
-      self.setState({messages: self.state.messages.concat([data])});
+      self.setState({messages: self.state.messages.concat([{text: data}])});
     })
   }
 
@@ -101,7 +100,7 @@ class ChatDialog extends React.Component {
     var self = this;
     var sender = this.state.attendees[0];
     var receiver = this.state.attendees[1];
-    var message = this.state.inputMessage;
+    var message = {text: this.state.inputMessage, self: true};
 
     //clear the text field
     this.handleChange('inputMessage',""); 
@@ -110,9 +109,9 @@ class ChatDialog extends React.Component {
 
     console.log('handling submit');
     console.log('attendees', this.state.attendees);
-
+    console.log('messages after submit', this.state.messages);
     //send message to receiver
-    chatServices.sendMessage(this.state.attendees, message);
+    chatServices.sendMessage(this.state.attendees, message.text);
   }
 
   handleChange(prop, newValue) {
@@ -168,10 +167,18 @@ class ChatDialog extends React.Component {
             <div className="middle" style={{wordWrap: "break-word"}}>
 
               {this.state.messages.map(function(message){
-                return (
-                  <p>{message}</p>
-                )
+                if(message.self){
+                  return (
+                    <p>{message.text}</p>
+                  )
+                }
+                else {
+                  return (
+                    <p style={{color:"red"}}>{message.text}</p>
+                  )
+                }
               })}
+             
 
             <TextField
               hintText="Message"
