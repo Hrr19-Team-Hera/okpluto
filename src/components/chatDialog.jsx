@@ -165,7 +165,7 @@ class ChatDialog extends React.Component {
             autoScrollBodyContent={true}
             autoDetectWindowHeight={true}
           >
-            <div className="middle">
+            <div className="middle" style={{wordWrap: "break-word"}}>
 
               {this.state.messages.map(function(message){
                 return (
@@ -176,7 +176,6 @@ class ChatDialog extends React.Component {
             <TextField
               hintText="Message"
               value = {this.state.inputMessage} 
-              floatingLabelText="*"
               onChange = {this.handleInputMessage}
             />
             </div>
