@@ -102,7 +102,9 @@ class ChatDialog extends React.Component {
     var sender = this.state.attendees[0];
     var receiver = this.state.attendees[1];
     var message = this.state.inputMessage;
-    console.log('message submitting,', message);
+
+    //clear the text field
+    this.handleChange('inputMessage',""); 
     //update this components messages to add my message
     self.setState({messages: self.state.messages.concat([message])});
 
@@ -173,6 +175,7 @@ class ChatDialog extends React.Component {
 
             <TextField
               hintText="Message"
+              value = {this.state.inputMessage} 
               floatingLabelText="*"
               onChange = {this.handleInputMessage}
             />
