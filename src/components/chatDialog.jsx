@@ -8,6 +8,7 @@ import MyTheme from '../theme/theme.js';
 //Material-UI components used within this form
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import MeetupCreation from './meetupCreation.jsx';
 import ChatCreation from './chatCreation.jsx';
@@ -28,10 +29,11 @@ class ChatDialog extends React.Component {
       attendees: [this.props.userInfo._id, this.props.userId],
       category: 'Dog Park',
       snackbar: false,
-      messages: ['a','b'],
-      testmessages: ['b','c']
+      messages: [{text: 'a'}],
+      inputMessage: ""
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleInputMessage = this.handleInputMessage.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     // this.handleOpenChat = this.handleOpenChat.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -44,7 +46,7 @@ class ChatDialog extends React.Component {
     var self = this;
     chatServices.listenForMessage(function(data){
       console.log('message pushed to state',data);
-      self.setState({messages: self.state.messages.concat([data])});
+      self.setState({messages: self.state.messages.concat([{text: data}])});
     })
   }
 
@@ -98,26 +100,40 @@ class ChatDialog extends React.Component {
     var self = this;
     var sender = this.state.attendees[0];
     var receiver = this.state.attendees[1];
-    var message = 'message from' + sender;
+    var message = {text: this.state.inputMessage, self: true};
 
+    //clear the text field
+    this.handleChange('inputMessage',""); 
     //update this components messages to add my message
     self.setState({messages: self.state.messages.concat([message])});
 
     console.log('handling submit');
     console.log('attendees', this.state.attendees);
-
+    console.log('messages after submit', this.state.messages);
     //send message to receiver
-    chatServices.sendMessage(this.state.attendees, message);
+    chatServices.sendMessage(this.state.attendees, message.text);
   }
 
   handleChange(prop, newValue) {
     var change = {};
     change[prop] = newValue;
     this.setState(change);
+    console.log('handledChange, new state.inputMessage',this.state.inputMessage);
+  }
+
+  handleInputMessage(e){
+    var message = e.target.value;
+    console.log('event message in handleinputmessage',message); 
+    this.handleChange('inputMessage',message);
   }
 
   render() {
     const actions = [
+      <TextField
+              hintText="Message"
+              value = {this.state.inputMessage} 
+              onChange = {this.handleInputMessage}
+            />,
       <FlatButton
         label="Close"
         primary={true}
@@ -153,15 +169,27 @@ class ChatDialog extends React.Component {
             autoScrollBodyContent={true}
             autoDetectWindowHeight={true}
           >
-            <div className="middle">
+            <div className="middle" style={{wordWrap: "break-word"}}>
 
               {this.state.messages.map(function(message){
-                return (
-                  <p>{message}</p>
-                )
+                if(message.self){
+                  return (
+                    <p>{message.text}</p>
+                  )
+                }
+                else {
+                  return (
+                    <p style={{color:"red"}}>{message.text}</p>
+                  )
+                }
               })}
+             
+
+            
             </div>
+            
           </Dialog>
+          
           <Snackbar
             bodyStyle={{background: Colors.blueGrey600}}
             open={this.state.snackbar}
@@ -169,14 +197,13 @@ class ChatDialog extends React.Component {
             autoHideDuration={3000}
             onRequestClose={this.handleSnackbarClose}
           />
-
-
-
         </div>
 
       </MuiThemeProvider>
     )
   }
 }
+
+
 
 module.exports = ChatDialog;

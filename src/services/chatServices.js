@@ -22,7 +22,7 @@ const createSocket = function() {
 }
 
 const sendMessage = function(attendees,message){
-  console.log('sending message');
+  console.log('sending message in chatServices',message);
   socket.emit('message',{
     sender: attendees[0],
     receiver: attendees[1],
@@ -43,7 +43,7 @@ const requestChat = function(attendees){
 //this sends messages to chat dialog component
 const listenForMessage = function(callback){
   socket.on('message', function(data){
-    callback(data);
+    callback(JSON.parse(data));
   });
 }
 
