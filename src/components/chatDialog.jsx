@@ -129,6 +129,11 @@ class ChatDialog extends React.Component {
 
   render() {
     const actions = [
+      <TextField
+              hintText="Message"
+              value = {this.state.inputMessage} 
+              onChange = {this.handleInputMessage}
+            />,
       <FlatButton
         label="Close"
         primary={true}
@@ -180,14 +185,11 @@ class ChatDialog extends React.Component {
               })}
              
 
-            <TextField
-              hintText="Message"
-              value = {this.state.inputMessage} 
-              onChange = {this.handleInputMessage}
-            />
+            
             </div>
+            
           </Dialog>
-
+          
           <Snackbar
             bodyStyle={{background: Colors.blueGrey600}}
             open={this.state.snackbar}
