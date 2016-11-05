@@ -8,6 +8,7 @@ import MyTheme from '../theme/theme.js';
 //Material-UI components used within this form
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import MeetupCreation from './meetupCreation.jsx';
 import ChatCreation from './chatCreation.jsx';
@@ -29,9 +30,11 @@ class ChatDialog extends React.Component {
       category: 'Dog Park',
       snackbar: false,
       messages: ['a','b'],
-      testmessages: ['b','c']
+      testmessages: ['b','c'],
+      inputMessage: ""
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleInputMessage = this.handleInputMessage.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     // this.handleOpenChat = this.handleOpenChat.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -98,8 +101,8 @@ class ChatDialog extends React.Component {
     var self = this;
     var sender = this.state.attendees[0];
     var receiver = this.state.attendees[1];
-    var message = 'message from' + sender;
-
+    var message = this.state.inputMessage;
+    console.log('message submitting,', message);
     //update this components messages to add my message
     self.setState({messages: self.state.messages.concat([message])});
 
@@ -114,6 +117,13 @@ class ChatDialog extends React.Component {
     var change = {};
     change[prop] = newValue;
     this.setState(change);
+    console.log('handledChange, new state.inputMessage',this.state.inputMessage);
+  }
+
+  handleInputMessage(e){
+    var message = e.target.value;
+    console.log('event message in handleinputmessage',message); 
+    this.handleChange('inputMessage',message);
   }
 
   render() {
@@ -160,8 +170,15 @@ class ChatDialog extends React.Component {
                   <p>{message}</p>
                 )
               })}
+
+            <TextField
+              hintText="Message"
+              floatingLabelText="*"
+              onChange = {this.handleInputMessage}
+            />
             </div>
           </Dialog>
+
           <Snackbar
             bodyStyle={{background: Colors.blueGrey600}}
             open={this.state.snackbar}
@@ -169,14 +186,13 @@ class ChatDialog extends React.Component {
             autoHideDuration={3000}
             onRequestClose={this.handleSnackbarClose}
           />
-
-
-
         </div>
 
       </MuiThemeProvider>
     )
   }
 }
+
+
 
 module.exports = ChatDialog;
